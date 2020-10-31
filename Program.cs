@@ -12,6 +12,7 @@ namespace showmsg
     {
 
         static string inv_arg = "Invalid arguments, display usage with --help";
+        static string help_msg = "TODO: put usage here";
         static void Main(string[] args)
         {
             MessageBoxIcon ico = MessageBoxIcon.None;
@@ -26,6 +27,11 @@ namespace showmsg
                 {
                     switch(args[i])
                     {
+
+                        case "--help":
+                            Console.WriteLine(help_msg);
+                            Environment.Exit(0);
+                            break;
 
                         case "-m":
                             if (i == args.Length - 1)
@@ -54,7 +60,30 @@ namespace showmsg
                             break;
 
                         case "-t":
-                            
+                            if (i == args.Length - 1)
+                            {
+                                Console.WriteLine(inv_arg);
+                                Environment.Exit(1);
+                            }
+
+                            if (args[i + 1].StartsWith(@"\") && !args[i + 1].StartsWith("\\\"")) //Had to somehow make sure you could still use quotation marks in the message if you write them like this: \"
+                            {
+
+                                for (int a = 0; a < args.Length; a++)
+                                {
+                                    if (args[a].EndsWith(@"\") && !args[i + 1].EndsWith("\\\"")) //Same with the ending one
+                                    {
+                                        title = String.Join(" ", args.Skip(i + 1).Take(a - i));
+                                        i += a - i;
+                                        break;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                title = args[i + 1];
+                                i += 1;
+                            }
                             break;
 
                         case "-i":
