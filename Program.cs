@@ -20,127 +20,180 @@ namespace showmsg
             String message = "";
             String title = "";
             bool iconSet = false;
+            bool btnSet = false;
             if (args.Length > 0)
             {
-           
-                for(int i = 0; i < args.Length; i++)
+                try
                 {
-                    switch(args[i])
+                    for (int i = 0; i < args.Length; i++)
                     {
+                        switch (args[i])
+                        {
 
-                        case "--help":
-                            Console.WriteLine(help_msg);
-                            Environment.Exit(0);
-                            break;
+                            case "--help":
+                                Console.WriteLine(help_msg);
+                                Environment.Exit(0);
+                                break;
 
-                        case "-m":
-                            if (i == args.Length - 1)
-                            {
-                                Console.WriteLine(inv_arg);
-                                Environment.Exit(1);
-                            }
+                            case "-m":
 
-                            if(args[i+1].StartsWith(@"\") && !args[i+1].StartsWith("\\\"")) //Had to somehow make sure you could still use quotation marks in the message if you write them like this: \"
-                            {
-                                
-                                for(int a = 0; a < args.Length; a++)
+                                if (args[i + 1].StartsWith(@"\") && !args[i + 1].StartsWith("\\\"")) //Had to somehow make sure you could still use quotation marks in the message if you write them like this: \"
                                 {
-                                    if (args[a].EndsWith(@"\") && !args[i + 1].EndsWith("\\\"")) //Same with the ending one
+
+                                    for (int a = 0; a < args.Length; a++)
                                     {
-                                        message = String.Join(" ", args.Skip(i + 1).Take(a - i));
-                                        i += a - i;
-                                        break;
+                                        if (args[a].EndsWith(@"\") && !args[i + 1].EndsWith("\\\"")) //Same with the ending one
+                                        {
+                                            message = String.Join(" ", args.Skip(i + 1).Take(a - i));
+                                            i += a - i;
+                                            break;
+                                        }
                                     }
                                 }
-                            } else
-                            {
-                                message = args[i + 1];
-                                i += 1;
-                            }
-                            break;
-
-                        case "-t":
-                            if (i == args.Length - 1)
-                            {
-                                Console.WriteLine(inv_arg);
-                                Environment.Exit(1);
-                            }
-
-                            if (args[i + 1].StartsWith(@"\") && !args[i + 1].StartsWith("\\\"")) //Had to somehow make sure you could still use quotation marks in the message if you write them like this: \"
-                            {
-
-                                for (int a = 0; a < args.Length; a++)
+                                else
                                 {
-                                    if (args[a].EndsWith(@"\") && !args[i + 1].EndsWith("\\\"")) //Same with the ending one
+                                    message = args[i + 1];
+                                    i += 1;
+                                }
+                                break;
+
+                            case "-t":
+
+                                if (args[i + 1].StartsWith(@"\") && !args[i + 1].StartsWith("\\\"")) //Had to somehow make sure you could still use quotation marks in the message if you write them like this: \"
+                                {
+
+                                    for (int a = 0; a < args.Length; a++)
                                     {
-                                        title = String.Join(" ", args.Skip(i + 1).Take(a - i));
-                                        i += a - i;
-                                        break;
+                                        if (args[a].EndsWith(@"\") && !args[i + 1].EndsWith("\\\"")) //Same with the ending one
+                                        {
+                                            title = String.Join(" ", args.Skip(i + 1).Take(a - i));
+                                            i += a - i;
+                                            break;
+                                        }
                                     }
                                 }
-                            }
-                            else
-                            {
-                                title = args[i + 1];
+                                else
+                                {
+                                    title = args[i + 1];
+                                    i += 1;
+                                }
+                                break;
+
+                            case "-i":
+
+                                switch (args[i + 1])
+                                {
+                                    case "error":
+                                        if (!iconSet)
+                                        {
+                                            ico = MessageBoxIcon.Error;
+                                            iconSet = true;
+                                        }
+                                        break;
+
+                                    case "info":
+                                        if (!iconSet)
+                                        {
+                                            ico = MessageBoxIcon.Information;
+                                            iconSet = true;
+                                        }
+                                        break;
+
+                                    case "warn":
+                                        if (!iconSet)
+                                        {
+                                            ico = MessageBoxIcon.Warning;
+                                            iconSet = true;
+                                        }
+                                        break;
+
+                                    default:
+                                        Console.WriteLine(inv_arg);
+                                        Environment.Exit(-1);
+                                        break;
+
+                                }
                                 i += 1;
-                            }
-                            break;
+                                break;
 
-                        case "-i":
-                            if (i == args.Length - 1)
-                            {
+                            case "-b":
+                                switch (args[i + 1])
+                                {
+                                    case "abortretryignore":
+                                        if (!btnSet)
+                                        {
+                                            btn = MessageBoxButtons.AbortRetryIgnore;
+                                            btnSet = true;
+                                        }
+                                        break;
+
+                                    case "okcancel":
+                                        if (!btnSet)
+                                        {
+                                            btn = MessageBoxButtons.OKCancel;
+                                            btnSet = true;
+                                        }
+                                        break;
+
+                                    case "ok":
+                                        if (!btnSet)
+                                        {
+                                            btn = MessageBoxButtons.OK;
+                                            btnSet = true;
+                                        }
+                                        break;
+
+                                    case "retrycancel":
+                                        if (!btnSet)
+                                        {
+                                            btn = MessageBoxButtons.RetryCancel;
+                                            btnSet = true;
+                                        }
+                                        break;
+
+                                    case "yesno":
+                                        if (!btnSet)
+                                        {
+                                            btn = MessageBoxButtons.YesNo;
+                                            btnSet = true;
+                                        }
+                                        break;
+
+                                    case "yesnocancel":
+                                        if (!btnSet)
+                                        {
+                                            btn = MessageBoxButtons.YesNoCancel;
+                                            btnSet = true;
+                                        }
+                                        break;
+
+                                    default:
+                                        Console.WriteLine(inv_arg);
+                                        Environment.Exit(-1);
+                                        break;
+
+                                }
+                                i += 1;
+                                break;
+
+                            default:
                                 Console.WriteLine(inv_arg);
-                                Environment.Exit(1);
-                            }
-                            
-                            switch(args[i+1])
-                            {
-                                case "error":
-                                    if (!iconSet)
-                                    {
-                                        ico = MessageBoxIcon.Error;
-                                        iconSet = true;
-                                    }
-                                    break;
-
-                                case "info":
-                                    if (!iconSet)
-                                    {
-                                        ico = MessageBoxIcon.Information;
-                                        iconSet = true;
-                                    }
-                                    break;
-
-                                case "warn":
-                                    if (!iconSet)
-                                    {
-                                        ico = MessageBoxIcon.Warning;
-                                        iconSet = true;
-                                    }
-                                    break;
-
-                                default:
-                                    Console.WriteLine(inv_arg);
-                                    Environment.Exit(1);
-                                    break;
-
-                            }
-                            i += 1;
-                            break;
-
-                        default:
-                            Console.WriteLine(inv_arg);
-                            Environment.Exit(1);
-                            break;
+                                Environment.Exit(-1);
+                                break;
 
 
+                        }
                     }
+                } catch(ArgumentOutOfRangeException)
+                {
+                    Console.WriteLine(inv_arg);
+                    Environment.Exit(-1);
                 }
                 MessageBox.Show(message, title, btn, ico);
             } else
             {
                 Console.WriteLine("No arguments, display usage with --help");
-                Environment.Exit(1);
+                Environment.Exit(-1);
             }
         }
 
