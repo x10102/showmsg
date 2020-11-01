@@ -8,8 +8,8 @@
     <ProjectGuid>{9D28EE32-7478-40A0-A17C-980B0F0D933A}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <LangVersion>8.0</LangVersion>
-    <RootNamespace>MessageTester</RootNamespace>
-    <AssemblyName>MessageTester</AssemblyName>
+    <RootNamespace>showmsg</RootNamespace>
+    <AssemblyName>showmsg</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
