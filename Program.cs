@@ -12,7 +12,8 @@ namespace showmsg
     {
 
         static string inv_arg = "Invalid arguments, display usage with --help";
-        static string help_msg = "TODO: put usage here";
+        static string help_msg = "TODO: Put helpful text here";
+        static string[] validArgs = { "-b", "-m", "-t", "-i" };
         static void Main(string[] args)
         {
             MessageBoxIcon ico = MessageBoxIcon.None;
@@ -37,45 +38,38 @@ namespace showmsg
 
                             case "-m":
 
-                                if (args[i + 1].StartsWith(@"\") && !args[i + 1].StartsWith("\\\"")) //Had to somehow make sure you could still use quotation marks in the message if you write them like this: \"
+                                for(int a = i + 1; a < args.Length; a++)
                                 {
-
-                                    for (int a = 0; a < args.Length; a++)
+                                    if(a+1 == args.Length)
                                     {
-                                        if (args[a].EndsWith(@"\") && !args[i + 1].EndsWith("\\\"")) //Same with the ending one
-                                        {
-                                            message = String.Join(" ", args.Skip(i + 1).Take(a - i));
-                                            i += a - i;
-                                            break;
-                                        }
+                                        message = String.Join(" ", args.Skip(i+1).Take(a));
+                                        i += a - i;
+                                        break;
+                                    } else if(validArgs.Contains(args[a]))
+                                    {
+                                        message = String.Join(" ", args.Skip(i+1).Take(a-1));
+                                        i += a - i - 1;
+                                        break;
                                     }
-                                }
-                                else
-                                {
-                                    message = args[i + 1];
-                                    i += 1;
                                 }
                                 break;
 
                             case "-t":
 
-                                if (args[i + 1].StartsWith(@"\") && !args[i + 1].StartsWith("\\\"")) //Had to somehow make sure you could still use quotation marks in the message if you write them like this: \"
+                                for (int a = i + 1; a < args.Length; a++)
                                 {
-
-                                    for (int a = 0; a < args.Length; a++)
+                                    if (a + 1 == args.Length)
                                     {
-                                        if (args[a].EndsWith(@"\") && !args[i + 1].EndsWith("\\\"")) //Same with the ending one
-                                        {
-                                            title = String.Join(" ", args.Skip(i + 1).Take(a - i));
-                                            i += a - i;
-                                            break;
-                                        }
+                                        title = String.Join(" ", args.Skip(i + 1).Take(a));
+                                        i += a - i;
+                                        break;
                                     }
-                                }
-                                else
-                                {
-                                    title = args[i + 1];
-                                    i += 1;
+                                    else if (validArgs.Contains(args[a]))
+                                    {
+                                        title = String.Join(" ", args.Skip(i + 1).Take(a - 1));
+                                        i += a - i - 1;
+                                        break;
+                                    }
                                 }
                                 break;
 
@@ -189,7 +183,8 @@ namespace showmsg
                     Console.WriteLine(inv_arg);
                     Environment.Exit(-1);
                 }
-                MessageBox.Show(message, title, btn, ico);
+                DialogResult rs = MessageBox.Show(message, title, btn, ico);
+                Console.Write(rs.ToString().ToLower());
             } else
             {
                 Console.WriteLine("No arguments, display usage with --help");
