@@ -236,6 +236,11 @@ namespace showmsg
                                             defSet = true;
                                         }
                                         break;
+
+                                    default:
+                                        Console.WriteLine(inv_arg);
+                                        Environment.Exit(-1);
+                                        break;
                                 }
                                 i += 1;
                                 break;
