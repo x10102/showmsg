@@ -2,17 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Text.RegularExpressions;
 
 namespace showmsg
 {
     class Program
     {
-
-        static string inv_arg = "Invalid arguments, display usage with --help";
-        static string help_msg = @"
+        #region strings
+        static readonly string inv_arg = "Invalid arguments, display usage with --help";
+        static readonly string help_msg = @"
 ======SHOWMSG PARAMETERS======
 
    -m Sets the message
@@ -28,17 +26,19 @@ namespace showmsg
    -d Sets the default button
     Possible values: [1 (default), 2, 3]
 ";
-        static string[] validArgs = {"-b", "-m", "-t", "-i", "-d"};
+        #endregion
+        #region arg_dictionaries
+        static readonly string[] validArgs = new string[] { "-b", "-m", "-t", "-i", "-d" };
+        static readonly Dictionary<String, MessageBoxButtons> btn_params = new Dictionary<String, MessageBoxButtons>() { {"abortretryignore", MessageBoxButtons.AbortRetryIgnore }, {"ok", MessageBoxButtons.OK }, { "okcancel", MessageBoxButtons.OKCancel }, { "yesno", MessageBoxButtons.YesNo }, { "yesnocancel", MessageBoxButtons.YesNoCancel }, { "retrycancel", MessageBoxButtons.RetryCancel } };
+        static readonly Dictionary<String, MessageBoxIcon> ico_params = new Dictionary<string, MessageBoxIcon>() { { "info", MessageBoxIcon.Information }, { "error", MessageBoxIcon.Error }, { "warn", MessageBoxIcon.Warning }, { "question", MessageBoxIcon.Question }, { "none", MessageBoxIcon.None } };
+        #endregion
         static void Main(string[] args)
         {
             MessageBoxIcon ico = MessageBoxIcon.None;
             MessageBoxButtons btn = MessageBoxButtons.OK;
             MessageBoxDefaultButton def = MessageBoxDefaultButton.Button1;
-            String message = "";
-            String title = "";
-            bool iconSet = false;
-            bool btnSet = false;
-            bool defSet = false;
+            String message = "", title = "";
+            bool iconSet = false, btnSet = false, defSet = false;
             if (args.Length > 0)
             {
                 try
@@ -59,13 +59,14 @@ namespace showmsg
                                 {
                                     if(validArgs.Contains(args[a]))
                                     {
-                                        message = String.Join(" ", 
+                                        message = String.Join(" ",
                                             args.Skip(i + 1)
-                                            .Take(a - i - 1)
-                                            .ToArray());            // Takes the range of arguments from the first one after "-m" to the one before the next parameter and joins them together to create the message string
+                                            .Take(a - i - 1));
+                                                       // Takes the range of arguments from the first one after "-m" to the one before the next parameter and joins them together to create the message string
 
-                                        i += a - i - 1;
+                                        i += a - i - 1;             // Skip over the message text 
                                         break;
+
                                     } else if(a + 1 == args.Length)
                                     {
                                         message = String.Join(" ", args.Skip(i + 1).Take(a - i)); 
@@ -80,17 +81,18 @@ namespace showmsg
                                 for (int o = i + 1; o < args.Length; o++)
                                 {
                                     
-                                    if (validArgs.Contains(args[o]))
+                                    if (validArgs.Contains(args[o])) // Same as -m
                                     {
-                                         title = String.Join(" ",
-                                            args.Skip(i + 1)
-                                            .Take(o - i - 1)
-                                            .ToArray());            // Same as -m
+                                         title = 
+                                            String.Join(" ", args.Skip(i + 1)
+                                            .Take(o - i - 1));     
+                                        
                                         i += o - i - 1;
                                         break;
+
                                     } else if (o + 1 == args.Length)
                                     {
-                                        title = String.Join(" ", args.Skip(i + 1).Take(2));
+                                        title = String.Join(" ", args.Skip(i + 1).Take(o - i));
                                         i += o - i;
                                         break;
                                     }
@@ -99,163 +101,60 @@ namespace showmsg
 
                             case "-i":
 
-                                switch (args[i + 1])
+                                if (ico_params.ContainsKey(args[i + 1]) && !iconSet)
                                 {
-                                    case "error":
-                                        if (!iconSet)
-                                        {
-                                            ico = MessageBoxIcon.Error;
-                                            iconSet = true;
-                                        }
-                                        break;
-
-                                    case "info":
-                                        if (!iconSet)
-                                        {
-                                            ico = MessageBoxIcon.Information;
-                                            iconSet = true;
-                                        }
-                                        break;
-
-                                    case "warn":
-                                        if (!iconSet)
-                                        {
-                                            ico = MessageBoxIcon.Warning;
-                                            iconSet = true;
-                                        }
-                                        break;
-
-                                    case "question":
-                                        if (!iconSet)
-                                        {
-                                            ico = MessageBoxIcon.Question;
-                                            iconSet = true;
-                                        }
-                                        break;
-
-                                    case "none":
-                                        if (!iconSet)
-                                        {
-                                            ico = MessageBoxIcon.None;
-                                            iconSet = true;
-                                        }
-                                        break;
-
-                                    default:
-                                        Console.WriteLine(inv_arg);
-                                        Environment.Exit(-1);
-                                        break;
-
+                                    ico = ico_params[args[i + 1]];
+                                    iconSet = true;
+                                    i += 1;
                                 }
-                                i += 1;
+                                else
+                                {
+                                    Console.WriteLine(inv_arg);
+                                    Environment.Exit(-1);
+                                }
+
                                 break;
 
                             case "-b":
-                                switch (args[i + 1])
+
+                                if (btn_params.ContainsKey(args[i + 1]) && !btnSet)
                                 {
-                                    case "abortretryignore":
-                                        if (!btnSet)
-                                        {
-                                            btn = MessageBoxButtons.AbortRetryIgnore;
-                                            btnSet = true;
-                                        }
-                                        break;
-
-                                    case "okcancel":
-                                        if (!btnSet)
-                                        {
-                                            btn = MessageBoxButtons.OKCancel;
-                                            btnSet = true;
-                                        }
-                                        break;
-
-                                    case "ok":
-                                        if (!btnSet)
-                                        {
-                                            btn = MessageBoxButtons.OK;
-                                            btnSet = true;
-                                        }
-                                        break;
-
-                                    case "retrycancel":
-                                        if (!btnSet)
-                                        {
-                                            btn = MessageBoxButtons.RetryCancel;
-                                            btnSet = true;
-                                        }
-                                        break;
-
-                                    case "yesno":
-                                        if (!btnSet)
-                                        {
-                                            btn = MessageBoxButtons.YesNo;
-                                            btnSet = true;
-                                        }
-                                        break;
-
-                                    case "yesnocancel":
-                                        if (!btnSet)
-                                        {
-                                            btn = MessageBoxButtons.YesNoCancel;
-                                            btnSet = true;
-                                        }
-                                        break;
-
-                                    default:
-                                        Console.WriteLine(inv_arg);
-                                        Environment.Exit(-1);
-                                        break;
-
+                                    btn = btn_params[args[i + 1]];
+                                    btnSet = true;
+                                    i += 1;
                                 }
-                                i += 1;
+                                else
+                                {
+                                    Console.WriteLine(inv_arg);
+                                    Environment.Exit(-1);
+                                }
+                                
                                 break;
 
                             case "-d":
-                                switch(args[i+1])
+                                int def_number;
+                                if(int.TryParse(args[i+1], out def_number) && def_number > 0 && def_number < 4 && !defSet)
                                 {
-                                    case "1":
-                                        if (!defSet)
-                                        {
-                                            def = MessageBoxDefaultButton.Button1;
-                                            defSet = true;
-                                        }
-                                        break;
-
-                                    case "2":
-                                        if (!defSet)
-                                        {
-                                            def = MessageBoxDefaultButton.Button2;
-                                            defSet = true;
-                                        }
-                                        break;
-
-                                    case "3":
-                                        if (!defSet)
-                                        {
-                                            def = MessageBoxDefaultButton.Button3;
-                                            defSet = true;
-                                        }
-                                        break;
-
-                                    default:
-                                        Console.WriteLine(inv_arg);
-                                        Environment.Exit(-1);
-                                        break;
+                                    def = (MessageBoxDefaultButton)((def_number - 1) * 256); // The values in the DefaultButton enum are defined as multiples of 256
+                                    defSet = true;
+                                    i++;
+                                } else
+                                {
+                                    Console.WriteLine(inv_arg);
+                                    Environment.Exit(-1);
                                 }
-                                i += 1;
                                 break;
+                                
 
                             default:
                                 Console.WriteLine(inv_arg);
                                 Environment.Exit(-1);
                                 break;
 
-
                         }
                     }
-                } catch(ArgumentOutOfRangeException e)
+                } catch(ArgumentOutOfRangeException)
                 {
-                    Console.WriteLine(e);
                     Console.WriteLine(inv_arg);
                     Environment.Exit(-1);
                 }

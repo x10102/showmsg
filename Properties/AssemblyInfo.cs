@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // sadu atributů. Změnou hodnot těchto atributů se upraví informace
 // přidružené k sestavení.
 [assembly: AssemblyTitle("showmsg")]
-[assembly: AssemblyDescription("A tool for displaying message boxes from CMD")]
+[assembly: AssemblyDescription("A tool for displaying message boxes from batch files")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("showmsg")]
